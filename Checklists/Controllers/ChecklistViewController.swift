@@ -8,12 +8,12 @@
 
 import UIKit
 
-class ChecklistViewController: UITableViewController, AddItemViewControllerDelegate {
-    func addItemViewControllerDidCancel(_ controller: AddItemViewController) {
+class ChecklistViewController: UITableViewController, ItemDetailViewControllerDelegate {
+    func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController) {
         controller.dismiss(animated: true, completion: nil)
     }
     
-    func addItemViewController(_ controller: AddItemViewController, didFinishAddingItem item: ChecklistItem) {
+    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem) {
         controller.dismiss(animated: true, completion: nil)
         
         guard let list = checklistItem else {
@@ -23,7 +23,7 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
         tableView.insertRows(at: [IndexPath(item: list.count, section: 0)], with: UITableView.RowAnimation.top)
     }
     
-    func addItemViewController(_ controller: AddItemViewController, didFinishEditingItem item: ChecklistItem) {
+    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
         controller.dismiss(animated: true, completion: nil)
         
         guard var list = checklistItem else {
@@ -36,12 +36,13 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
         tableView.reloadRows(at: [IndexPath(item: index, section: 0)], with: UITableView.RowAnimation.automatic)
     }
     
-    var t: UITableViewController?
     var checklistItem: [ChecklistItem]?
+    static var documentDirectory: URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         let item1 = ChecklistItem(text: "item")
         let item2 = ChecklistItem(text: "item",checked: true)
         let item3 = ChecklistItem(text: "item")
@@ -53,14 +54,13 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "addItem") {
-            guard let nav = segue.destination as? UINavigationController, let vc = nav.viewControllers[0] as? AddItemViewController else {
+            guard let nav = segue.destination as? UINavigationController, let vc = nav.topViewController as? ItemDetailViewController else {
                 return
             }
             vc.navigationItem.title = "Add Item"
-            vc.mode = false
             vc.delegate = self
         } else if (segue.identifier == "editItem") {
-            guard let nav = segue.destination as? UINavigationController, let vc = nav.viewControllers[0] as? AddItemViewController else {
+            guard let nav = segue.destination as? UINavigationController, let vc = nav.topViewController as? ItemDetailViewController else {
                 return
             }
             guard let cell = sender as? ChecklistItemCell, let id = tableView.indexPath(for: cell)?.row else {
@@ -68,7 +68,6 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
             }
             vc.navigationItem.title = "Edit Item"
             vc.itemToEdit = checklistItem?[id]
-            vc.mode = true
             vc.delegate = self
         }
     }

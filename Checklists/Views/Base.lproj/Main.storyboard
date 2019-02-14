@@ -26,27 +26,26 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9o6-3l-kyN">
-                                            <rect key="frame" x="47" y="10.5" width="42" height="22.5"/>
+                                            <rect key="frame" x="47" y="11.5" width="252" height="20.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="✔️" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iMN-nj-kYh">
-                                            <rect key="frame" x="16" y="10.5" width="23" height="22.5"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="✓" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iMN-nj-kYh">
+                                            <rect key="frame" x="16" y="5.5" width="23" height="33"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="23" id="onh-lK-LMs"/>
                                             </constraints>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="9o6-3l-kyN" firstAttribute="bottom" secondItem="sNK-Ir-RK6" secondAttribute="bottomMargin" id="1df-gJ-jJb"/>
-                                        <constraint firstItem="9o6-3l-kyN" firstAttribute="height" secondItem="iMN-nj-kYh" secondAttribute="height" id="Aj2-th-kvh"/>
+                                        <constraint firstItem="9o6-3l-kyN" firstAttribute="centerY" secondItem="sNK-Ir-RK6" secondAttribute="centerY" id="DQR-A7-S0Y"/>
                                         <constraint firstItem="iMN-nj-kYh" firstAttribute="centerY" secondItem="sNK-Ir-RK6" secondAttribute="centerY" id="FRh-9b-1Dt"/>
-                                        <constraint firstItem="9o6-3l-kyN" firstAttribute="baseline" secondItem="iMN-nj-kYh" secondAttribute="baseline" id="K40-L9-h1l"/>
                                         <constraint firstItem="9o6-3l-kyN" firstAttribute="leading" secondItem="iMN-nj-kYh" secondAttribute="trailing" constant="8" id="Uhi-hU-WPw"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="9o6-3l-kyN" secondAttribute="trailing" id="ka8-q4-Hcm"/>
                                         <constraint firstItem="iMN-nj-kYh" firstAttribute="leading" secondItem="sNK-Ir-RK6" secondAttribute="leading" constant="16" id="rfK-ab-sUZ"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -74,10 +73,10 @@
             </objects>
             <point key="canvasLocation" x="1519.2" y="-238.83058470764618"/>
         </scene>
-        <!--Add Item View Controller-->
+        <!--Item Detail View Controller-->
         <scene sceneID="JYP-gx-gtF">
             <objects>
-                <tableViewController id="m9w-Jn-czy" customClass="AddItemViewController" customModule="Checklists" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="m9w-Jn-czy" customClass="ItemDetailViewController" customModule="Checklists" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="LCd-ta-p7R">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
