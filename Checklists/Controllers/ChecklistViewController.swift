@@ -146,16 +146,24 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     }
     
     func loadChecklistItems() {
-        do {
-        let datas = try Data(contentsOf: ChecklistViewController.dataFileUrl)
         
-        let decoder = JSONDecoder()
-        let list = try decoder.decode([ChecklistItem].self, from: datas)
-        checklistItem = list
-        }catch {
-            //handle error
-            print(error)
+        if !FileManager.default.fileExists(atPath: ChecklistViewController.dataFileUrl.path) {
+            checklistItem = []
+        }else {
+            do {
+                let datas = try Data(contentsOf: ChecklistViewController.dataFileUrl)
+                
+                let decoder = JSONDecoder()
+                let list = try decoder.decode([ChecklistItem].self, from: datas)
+                checklistItem = list
+            }catch {
+                //handle error
+                print(error)
+                
+            }
         }
+        
+       
     }
     
 }
