@@ -8,10 +8,10 @@
 
 import Foundation
 
-class ChecklistItem {
+class ChecklistItem : Codable, CustomStringConvertible {
     
-    var text: String?
-    var checked: Bool?
+    var text: String
+    var checked: Bool
     
     init(text: String,checked: Bool = false ) {
         self.text = text
@@ -19,10 +19,10 @@ class ChecklistItem {
     }
     
     func toggleChecked() {
-        guard let checked = self.checked else {
-            return
-        }
         self.checked = !checked
     }
-    
+
+    var description: String {
+        return self.text
+    }
 }
