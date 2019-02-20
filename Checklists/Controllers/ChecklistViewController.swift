@@ -132,6 +132,8 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
         cell.lblTitle.text = item.text
     }
     
+        //MARK: - load ans save json data
+    
     func saveChecklistItems() {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -162,8 +164,6 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
                 
             }
         }
-        
-       
     }
     
 }
