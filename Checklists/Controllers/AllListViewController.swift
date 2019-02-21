@@ -23,6 +23,12 @@ class AllListViewController: UITableViewController {
         print(AllListViewController.dataFileUrl)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tableView.reloadData()
+    }
+    
     //MARK: - prepare
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -30,7 +36,6 @@ class AllListViewController: UITableViewController {
             guard let nav = segue.destination as? UINavigationController, let vc = nav.topViewController as? ChecklistViewController else {
                 return
             }
-            
             guard let cell = sender as? UITableViewCell, let id = tableView.indexPath(for: cell)?.row else {
                 return
             }
@@ -65,7 +70,14 @@ class AllListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "checklists", for: indexPath)
 
         cell.textLabel?.text = DataModel.shared().list![indexPath.row].name
-
+        
+        if DataModel.shared().list![indexPath.row].items?.count == 0 {
+            cell.detailTextLabel?.text = "(No item)"
+        } else if DataModel.shared().list![indexPath.row].uncheckedItemsCount == 0 {
+            cell.detailTextLabel?.text = "All Done!"
+        } else {
+            cell.detailTextLabel?.text = "\(DataModel.shared().list![indexPath.row].uncheckedItemsCount)"
+        }
         return cell
     }
     
@@ -73,12 +85,6 @@ class AllListViewController: UITableViewController {
        DataModel.shared().list!.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
     }
-    
-    //MARK: - load ans save json data
-
-    
-
-
 }
 
 extension AllListViewController: ListDetailViewControllerDelegate {
@@ -90,6 +96,7 @@ extension AllListViewController: ListDetailViewControllerDelegate {
         controller.dismiss(animated: true, completion: nil)
 
         DataModel.shared().list!.append(list)
+        DataModel.shared().list = DataModel.shared().sortCheklists(list: DataModel.shared().list!)
         
         tableView.insertRows(at: [IndexPath(item: DataModel.shared().list!.count-1, section: 0)], with: UITableView.RowAnimation.top)
     }
@@ -101,6 +108,7 @@ extension AllListViewController: ListDetailViewControllerDelegate {
             return
         }
         DataModel.shared().list![index] = list
+        DataModel.shared().list = DataModel.shared().sortCheklists(list: DataModel.shared().list!)
         tableView.reloadRows(at: [IndexPath(item: index, section: 0)], with: UITableView.RowAnimation.automatic)
     }
     

@@ -54,11 +54,19 @@ class DataModel {
                 
                 let decoder = JSONDecoder()
                 let list = try decoder.decode([Checklist].self, from: datas)
-                return list
+                    return sortCheklists(list: list)
             }catch {
                 print(error)
             }
         }
         return []
+    }
+    
+    func sortCheklists(list: [Checklist]) -> [Checklist] {
+        if list.count >= 2 {
+            return list.sorted(by: { $0.name < $1.name })
+        }else {
+            return list
+        }
     }
 }

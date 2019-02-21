@@ -13,6 +13,10 @@ class Checklist: Codable, CustomStringConvertible  {
     var name: String
     var items: [ChecklistItem]?
     
+    var uncheckedItemsCount: Int {
+        return (items?.filter({ $0.checked == false }).count)!
+    }
+    
     init(name: String,list: [ChecklistItem]? = []) {
         self.name = name
         guard let items = list else {
