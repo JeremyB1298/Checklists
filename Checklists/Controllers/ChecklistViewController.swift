@@ -57,6 +57,8 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
         loadChecklistItems()
     }
     
+    //MARK: - prepare
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "addItem") {
             guard let nav = segue.destination as? UINavigationController, let vc = nav.topViewController as? ItemDetailViewController else {
