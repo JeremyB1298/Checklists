@@ -8,12 +8,12 @@
 
 import UIKit
 
-class ChecklistViewController: UITableViewController, AddItemViewControllerDelegate {
-    func addItemViewControllerDidCancel(_ controller: AddItemViewController) {
+class ChecklistViewController: UITableViewController, ItemDetailViewControllerDelegate {
+    func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController) {
         controller.dismiss(animated: true, completion: nil)
     }
     
-    func addItemViewController(_ controller: AddItemViewController, didFinishAddingItem item: ChecklistItem) {
+    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem) {
         controller.dismiss(animated: true, completion: nil)
         
         guard let list = checklistItem else {
@@ -21,9 +21,10 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
         }
         checklistItem?.append(item)
         tableView.insertRows(at: [IndexPath(item: list.count, section: 0)], with: UITableView.RowAnimation.top)
+        saveChecklistItems()
     }
     
-    func addItemViewController(_ controller: AddItemViewController, didFinishEditingItem item: ChecklistItem) {
+    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
         controller.dismiss(animated: true, completion: nil)
         
         guard var list = checklistItem else {
@@ -34,33 +35,39 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
         }
         list[index] = item
         tableView.reloadRows(at: [IndexPath(item: index, section: 0)], with: UITableView.RowAnimation.automatic)
+        saveChecklistItems()
     }
     
-    var t: UITableViewController?
     var checklistItem: [ChecklistItem]?
+    static var documentDirectory: URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
+    
+    static var dataFileUrl: URL {
+        return ChecklistViewController.documentDirectory.appendingPathComponent("Checklists").appendingPathExtension("json")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let item1 = ChecklistItem(text: "item")
-        let item2 = ChecklistItem(text: "item",checked: true)
-        let item3 = ChecklistItem(text: "item")
-        let item4 = ChecklistItem(text: "item",checked:true)
-        
-        checklistItem = [item1, item2, item3, item4]
-        
+        print(ChecklistViewController.documentDirectory)
+        print(ChecklistViewController.dataFileUrl)
     }
+    
+    override func awakeFromNib() {
+        loadChecklistItems()
+    }
+    
+    //MARK: - prepare
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "addItem") {
-            guard let nav = segue.destination as? UINavigationController, let vc = nav.viewControllers[0] as? AddItemViewController else {
+            guard let nav = segue.destination as? UINavigationController, let vc = nav.topViewController as? ItemDetailViewController else {
                 return
             }
             vc.navigationItem.title = "Add Item"
-            vc.mode = false
             vc.delegate = self
         } else if (segue.identifier == "editItem") {
-            guard let nav = segue.destination as? UINavigationController, let vc = nav.viewControllers[0] as? AddItemViewController else {
+            guard let nav = segue.destination as? UINavigationController, let vc = nav.topViewController as? ItemDetailViewController else {
                 return
             }
             guard let cell = sender as? ChecklistItemCell, let id = tableView.indexPath(for: cell)?.row else {
@@ -68,7 +75,6 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
             }
             vc.navigationItem.title = "Edit Item"
             vc.itemToEdit = checklistItem?[id]
-            vc.mode = true
             vc.delegate = self
         }
     }
@@ -98,6 +104,7 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         checklistItem?.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+        saveChecklistItems()
     }
     
     //MARK: - table view delegate
@@ -110,6 +117,7 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
         
         list[indexPath.row].toggleChecked()
         tableView.reloadRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+        saveChecklistItems()
     }
     
     //MARK: - configuration
@@ -124,6 +132,40 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     
     func configureText(for cell: ChecklistItemCell, withItem item: ChecklistItem) {
         cell.lblTitle.text = item.text
+    }
+    
+        //MARK: - load ans save json data
+    
+    func saveChecklistItems() {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        do {
+            let data = try encoder.encode(checklistItem)
+            print(String(data: data, encoding: .utf8)!)
+            try data.write(to: ChecklistViewController.dataFileUrl)
+        } catch {
+            //handle error
+            print(error)
+        }
+    }
+    
+    func loadChecklistItems() {
+        
+        if !FileManager.default.fileExists(atPath: ChecklistViewController.dataFileUrl.path) {
+            checklistItem = []
+        }else {
+            do {
+                let datas = try Data(contentsOf: ChecklistViewController.dataFileUrl)
+                
+                let decoder = JSONDecoder()
+                let list = try decoder.decode([ChecklistItem].self, from: datas)
+                checklistItem = list
+            }catch {
+                //handle error
+                print(error)
+                
+            }
+        }
     }
     
 }
