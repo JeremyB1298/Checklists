@@ -39,7 +39,6 @@ class ItemDetailViewController: UITableViewController {
         super.viewWillAppear(animated)
         txtField.becomeFirstResponder()
         bDone.isEnabled = false
-        
     }
     
     @IBAction func cancel() {
