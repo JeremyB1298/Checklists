@@ -36,6 +36,7 @@ class ChecklistViewController: UITableViewController{
             }
             vc.navigationItem.title = "Edit Item"
             vc.itemToEdit = list.items?[id]
+            vc.dueDate = (vc.itemToEdit?.dueDate)!
             vc.delegate = self
         }
     }
@@ -88,6 +89,7 @@ class ChecklistViewController: UITableViewController{
             cell.lblChecked.isHidden = true
         } else {
             cell.lblChecked.isHidden = false
+            cell.lblChecked.textColor = view.tintColor
         }
     }
     
@@ -105,6 +107,7 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate {
     }
     
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem) {
+        item.scheduleNotification()
         controller.dismiss(animated: true, completion: nil)
         
         list.items!.append(item)
@@ -114,7 +117,7 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate {
     
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
         controller.dismiss(animated: true, completion: nil)
-        
+        item.scheduleNotification()
         guard let index = list.items!.firstIndex(where: { $0 === item }) else {
             return
         }

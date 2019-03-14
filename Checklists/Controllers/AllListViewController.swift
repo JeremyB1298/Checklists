@@ -20,7 +20,7 @@ class AllListViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(AllListViewController.dataFileUrl)
+        //print(AllListViewController.dataFileUrl)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -71,13 +71,24 @@ class AllListViewController: UITableViewController {
 
         cell.textLabel?.text = DataModel.shared().list![indexPath.row].name
         
-        if DataModel.shared().list![indexPath.row].items?.count == 0 {
+        switch (DataModel.shared().list![indexPath.row].items?.count,DataModel.shared().list![indexPath.row].uncheckedItemsCount) {
+            
+        case (0,_):
             cell.detailTextLabel?.text = "(No item)"
-        } else if DataModel.shared().list![indexPath.row].uncheckedItemsCount == 0 {
+        case (_,0):
             cell.detailTextLabel?.text = "All Done!"
-        } else {
-            cell.detailTextLabel?.text = "\(DataModel.shared().list![indexPath.row].uncheckedItemsCount)"
+        case(_, let nbr):
+            cell.detailTextLabel?.text = "\(nbr)"
         }
+        
+//        if DataModel.shared().list![indexPath.row].items?.count == 0 {
+//            cell.detailTextLabel?.text = "(No item)"
+//        } else if DataModel.shared().list![indexPath.row].uncheckedItemsCount == 0 {
+//            cell.detailTextLabel?.text = "All Done!"
+//        } else {
+//            cell.detailTextLabel?.text = "\(DataModel.shared().list![indexPath.row].uncheckedItemsCount)"
+//        }
+        cell.imageView?.image = DataModel.shared().list![indexPath.row].icon?.image
         return cell
     }
     

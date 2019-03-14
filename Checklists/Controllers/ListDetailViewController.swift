@@ -19,8 +19,9 @@ class ListDetailViewController: UITableViewController {
     @IBOutlet weak var txtField: UITextField!
     @IBOutlet weak var btnDone: UIBarButtonItem!
     
+    @IBOutlet weak var ivIcon: UIImageView!
     var delegate: ListDetailViewControllerDelegate?
-    
+    var icon: IconAsset?
     var editList: Checklist?
     
     override func viewDidLoad() {
@@ -28,9 +29,11 @@ class ListDetailViewController: UITableViewController {
         
         if editList == nil {
             self.navigationItem.title = "Add List"
+            ivIcon.image = IconAsset.Folder.image
         } else {
             self.navigationItem.title = "Edit List"
             txtField.text = editList?.name
+            ivIcon.image = editList?.icon?.image
         }
         
     }
@@ -38,7 +41,21 @@ class ListDetailViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         txtField.becomeFirstResponder()
-        btnDone.isEnabled = false
+        if txtField.text?.count != 0 {
+            btnDone.isEnabled = true
+        } else {
+            btnDone.isEnabled = false
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "IconSegueIdentifier") {
+            guard let nav = segue.destination as? UINavigationController, let vc = nav.topViewController as? IconPickerViewController else {
+                return
+            }
+            vc.navigationItem.title = "Choose Icon"
+            vc.delegate = self
+        }
     }
     
     // MARK: - Table view data source
@@ -49,12 +66,17 @@ class ListDetailViewController: UITableViewController {
     @IBAction func actDone() {
         if editList != nil{
             editList?.name = txtField.text!
+            editList?.icon = icon
             delegate?.listDetailViewController(self, didFinishEditingItem: editList!)
         } else {
             guard let txt = txtField.text else {
                 return
             }
-            delegate?.listDetailViewController(self, didFinishAddingItem: Checklist(name: txt))
+            if let checklistIcon = icon {
+                delegate?.listDetailViewController(self, didFinishAddingItem: Checklist(name: txt, icon: checklistIcon))
+            } else {
+                delegate?.listDetailViewController(self, didFinishAddingItem: Checklist(name: txt))
+            }
         }
     }
 }
@@ -69,4 +91,17 @@ extension ListDetailViewController: UITextFieldDelegate {
         }
         return true
     }
+}
+
+extension ListDetailViewController: IconPickerViewControllerDelegate {
+    func iconPickerViewController(_ controller: IconPickerViewController, didFinishAddingIcon icon: IconAsset) {
+        self.icon = icon
+        ivIcon.image = icon.image
+        controller.dismiss(animated: true, completion: nil)
+    }
+
+    func iconPickerViewControllerDidCancel(_ controller: IconPickerViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
 }

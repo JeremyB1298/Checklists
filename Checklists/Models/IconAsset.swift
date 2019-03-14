@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-enum IconAsset : String {
+enum IconAsset : String, Codable, CaseIterable {
     case Appointments
     case Birthdays
     case Chores

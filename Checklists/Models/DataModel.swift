@@ -14,8 +14,9 @@ class DataModel {
     var list: [Checklist]?
     
     private static var sharedNetworkManager: DataModel = {
+        UserDefaults.standard.register(defaults: [UserDefaultsKeys.firstLaunch: true])
+        UserDefaults.standard.register(defaults: [UserDefaultsKeys.checklistItemID: 0])
         let dataModel = DataModel()
-        
         return dataModel
     }()
     
@@ -34,7 +35,7 @@ class DataModel {
         encoder.outputFormatting = .prettyPrinted
         do {
             let data = try encoder.encode(self.list)
-            print(String(data: data, encoding: .utf8)!)
+            //print(String(data: data, encoding: .utf8)!)
             try data.write(to: AllListViewController.dataFileUrl)
         } catch {
             print(error)
@@ -46,6 +47,13 @@ class DataModel {
     }
     
     private func loadChecklist() -> [Checklist] {
+        
+        if(Preferences.firstLaunch) {
+            let list = [Checklist(name: "List", list: [ChecklistItem(text: "Edit your first item"), ChecklistItem(text: "Swipe me to delete")], icon: IconAsset.Folder)]
+            UserDefaults.standard.set(false, forKey: UserDefaultsKeys.firstLaunch)
+            return list
+        }
+        
         if !FileManager.default.fileExists(atPath: AllListViewController.dataFileUrl.path) {
             return []
         }else {

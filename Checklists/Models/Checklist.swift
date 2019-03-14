@@ -10,6 +10,7 @@ import Foundation
 
 class Checklist: Codable, CustomStringConvertible  {
     
+    var icon: IconAsset?
     var name: String
     var items: [ChecklistItem]?
     
@@ -17,7 +18,8 @@ class Checklist: Codable, CustomStringConvertible  {
         return (items?.filter({ $0.checked == false }).count)!
     }
     
-    init(name: String,list: [ChecklistItem]? = []) {
+    init(name: String,list: [ChecklistItem]? = [], icon: IconAsset = .Folder) {
+        self.icon = icon
         self.name = name
         guard let items = list else {
             return
