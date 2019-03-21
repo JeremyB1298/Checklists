@@ -64,9 +64,10 @@ class ChecklistViewController: UITableViewController{
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        list.items?[indexPath.row].deleteNotification()
         list.items?.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
-        //saveChecklistItems()
+        
     }
     
     //MARK: - table view delegate
@@ -79,7 +80,7 @@ class ChecklistViewController: UITableViewController{
         
         list[indexPath.row].toggleChecked()
         tableView.reloadRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
-        //saveChecklistItems()
+        
     }
     
     //MARK: - configuration
@@ -117,7 +118,6 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate {
         
         list.items!.append(item)
         tableView.insertRows(at: [IndexPath(item: list.items!.count-1, section: 0)], with: UITableView.RowAnimation.top)
-        //saveChecklistItems()
     }
     
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
@@ -132,7 +132,6 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate {
         }
         list.items![index] = item
         tableView.reloadRows(at: [IndexPath(item: index, section: 0)], with: UITableView.RowAnimation.automatic)
-        //saveChecklistItems()
     }
 }
 
