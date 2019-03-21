@@ -41,11 +41,16 @@ class ChecklistItem : Codable, CustomStringConvertible {
         return self.text
     }
     
+    func deleteNotification() {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [itemID.description])
+    }
+    
     func scheduleNotification() {
         
         let content = UNMutableNotificationContent()
+        deleteNotification()
         content.title = text
-        content.body = "Every Tuesday at 2pm"
+        content.body = "EVENT"
         
         var dateComponents = DateComponents()
         dateComponents.calendar = Calendar.current
@@ -61,16 +66,15 @@ class ChecklistItem : Codable, CustomStringConvertible {
         
         dateComponents.year = year
         dateComponents.month = month
-        dateComponents.day = day  // Tuesday
-        dateComponents.hour = hour    // 14:00 hours
+        dateComponents.day = day
+        dateComponents.hour = hour
         dateComponents.minute = minutes
         dateComponents.second = seconds
-        // Create the trigger as a repeating event.
+        print(dateComponents)
         let trigger = UNCalendarNotificationTrigger(
             dateMatching: dateComponents, repeats: false)
-        let uuidString = UUID().uuidString
-        print(dateComponents)
-        let request = UNNotificationRequest(identifier: uuidString,
+        //let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(identifier: itemID.description,
                                             content: content, trigger: trigger)
         
         let center = UNUserNotificationCenter.current()

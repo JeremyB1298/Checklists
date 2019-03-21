@@ -59,7 +59,6 @@ class AllListViewController: UITableViewController {
             vc.delegate = self
         }
     }
-    
     //MARK: - data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

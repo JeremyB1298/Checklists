@@ -107,7 +107,12 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate {
     }
     
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem) {
-        item.scheduleNotification()
+        if item.shouldRemind, item.dueDate > Date() {
+            item.scheduleNotification()
+        } else {
+            item.deleteNotification()
+        }
+        
         controller.dismiss(animated: true, completion: nil)
         
         list.items!.append(item)
@@ -117,7 +122,11 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate {
     
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
         controller.dismiss(animated: true, completion: nil)
-        item.scheduleNotification()
+        if item.shouldRemind, item.dueDate > Date() {
+            item.scheduleNotification()
+        } else {
+            item.deleteNotification()
+        }
         guard let index = list.items!.firstIndex(where: { $0 === item }) else {
             return
         }

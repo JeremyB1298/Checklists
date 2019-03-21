@@ -43,6 +43,7 @@ class ItemDetailViewController: UITableViewController {
         
         if itemToEdit != nil {
             txtField.text = itemToEdit?.text
+            datePicker.date = (itemToEdit?.dueDate)!
             shouldRemindSwitch.isOn = (itemToEdit?.shouldRemind)!
         }
             dueDateLabel.text = updateDueDateLabel()
@@ -141,6 +142,7 @@ class ItemDetailViewController: UITableViewController {
         if itemToEdit != nil{
             itemToEdit?.text = txtField.text!
             itemToEdit?.shouldRemind = shouldRemindSwitch.isOn
+            itemToEdit?.dueDate = dueDate
             delegate?.itemDetailViewController(self, didFinishEditingItem: itemToEdit!)
         } else {
             guard let txt = txtField.text else {
