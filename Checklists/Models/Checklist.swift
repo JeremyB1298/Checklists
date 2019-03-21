@@ -29,4 +29,11 @@ class Checklist: Codable, CustomStringConvertible  {
     var description: String {
         return self.name
     }
+    
+    func deleteNotifications() {
+        for item in items! {
+            item.deleteNotification()
+        }
+    }
+    
 }

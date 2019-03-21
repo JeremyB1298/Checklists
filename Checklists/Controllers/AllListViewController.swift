@@ -92,7 +92,10 @@ class AllListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-       DataModel.shared().list!.remove(at: indexPath.row)
+        
+        DataModel.shared().list![indexPath.row].deleteNotifications()
+        
+        DataModel.shared().list!.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
     }
 }
