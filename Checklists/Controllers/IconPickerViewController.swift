@@ -20,10 +20,9 @@ class IconPickerViewController: UITableViewController {
         super.viewDidLoad()
     }
 
-    // MARK: - Table view data source
+    // MARK: - TSable view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return IconAsset.allCases.count
     }
     
@@ -37,10 +36,14 @@ class IconPickerViewController: UITableViewController {
         return cell
     }
     
+    // MARK: - Table view delegate
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         delegate?.iconPickerViewController(self, didFinishAddingIcon: IconAsset.allCases[indexPath.row])
     }
 
+    // MARK: - Personnal functions
+    
     @IBAction func cancel(_ sender: Any) {
         delegate?.iconPickerViewControllerDidCancel(self)
     }

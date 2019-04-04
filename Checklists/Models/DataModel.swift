@@ -27,7 +27,6 @@ class DataModel {
             selector: #selector(saveChecklists),
             name: UIApplication.didEnterBackgroundNotification,
             object: nil)
-        
     }
     
      @objc func saveChecklists() {
@@ -35,7 +34,6 @@ class DataModel {
         encoder.outputFormatting = .prettyPrinted
         do {
             let data = try encoder.encode(self.list)
-            //print(String(data: data, encoding: .utf8)!)
             try data.write(to: AllListViewController.dataFileUrl)
         } catch {
             print(error)
@@ -59,7 +57,6 @@ class DataModel {
         }else {
             do {
                 let datas = try Data(contentsOf: AllListViewController.dataFileUrl)
-                
                 let decoder = JSONDecoder()
                 let list = try decoder.decode([Checklist].self, from: datas)
                     return sortCheklists(list: list)

@@ -10,15 +10,15 @@ import UIKit
 
 class ChecklistViewController: UITableViewController{
 
-    var list: Checklist!
+    var checkList: Checklist!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationItem.title = list.name
+        self.navigationItem.title = checkList.name
     }
     
-    //MARK: - prepare
+    //MARK: - Prepare
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "addItem") {
@@ -35,15 +35,16 @@ class ChecklistViewController: UITableViewController{
                 return
             }
             vc.navigationItem.title = "Edit Item"
-            vc.itemToEdit = list.items?[id]
+            vc.itemToEdit = checkList.items?[id]
             vc.dueDate = (vc.itemToEdit?.dueDate)!
             vc.delegate = self
         }
     }
-    //MARK: - data source
+    
+    //MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let list = list.items else {
+        guard let list = checkList.items else {
             return 0
         }
         return list.count
@@ -54,7 +55,7 @@ class ChecklistViewController: UITableViewController{
             return UITableViewCell()
         }
         
-        guard let list = list.items else {
+        guard let list = checkList.items else {
             return UITableViewCell()
         }
         configureText(for: cell, withItem: list[indexPath.row])
@@ -64,17 +65,17 @@ class ChecklistViewController: UITableViewController{
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        list.items?[indexPath.row].deleteNotification()
-        list.items?.remove(at: indexPath.row)
+        checkList.items?[indexPath.row].deleteNotification()
+        checkList.items?.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
         
     }
     
-    //MARK: - table view delegate
+    //MARK: - Table view delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        guard let list = list.items else {
+        guard let list = checkList.items else {
             return
         }
         
@@ -83,54 +84,60 @@ class ChecklistViewController: UITableViewController{
         
     }
     
-    //MARK: - configuration
+    //MARK: - Configuration
     
     func configureCheckmark(for cell: ChecklistItemCell, withItem item: ChecklistItem) {
-        if item.checked == false {
-            cell.lblChecked.isHidden = true
-        } else {
-            cell.lblChecked.isHidden = false
+        if item.checked {
             cell.lblChecked.textColor = view.tintColor
         }
+        cell.lblChecked.isHidden = !item.checked
     }
     
     func configureText(for cell: ChecklistItemCell, withItem item: ChecklistItem) {
         cell.lblTitle.text = item.text
     }
     
+    //MARK: - Button action
+    
     @IBAction func btnCancel(_ sender: UIBarButtonItem) {
         self.dismiss(animated: true, completion: nil)
     }
 }
+
+//MARK: - ItemDetailViewControllerDelegate
+
 extension ChecklistViewController: ItemDetailViewControllerDelegate {
     func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController) {
         controller.dismiss(animated: true, completion: nil)
     }
     
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem) {
+        
+        controller.dismiss(animated: true, completion: nil)
+        
         if item.shouldRemind, item.dueDate > Date() {
             item.scheduleNotification()
         } else {
             item.deleteNotification()
         }
         
-        controller.dismiss(animated: true, completion: nil)
-        
-        list.items!.append(item)
-        tableView.insertRows(at: [IndexPath(item: list.items!.count-1, section: 0)], with: UITableView.RowAnimation.top)
+        checkList.items!.append(item)
+        tableView.insertRows(at: [IndexPath(item: checkList.items!.count-1, section: 0)], with: UITableView.RowAnimation.top)
     }
     
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
+        
         controller.dismiss(animated: true, completion: nil)
+        
         if item.shouldRemind, item.dueDate > Date() {
             item.scheduleNotification()
         } else {
             item.deleteNotification()
         }
-        guard let index = list.items!.firstIndex(where: { $0 === item }) else {
+        guard let index = checkList.items!.firstIndex(where: { $0 === item }) else {
             return
         }
-        list.items![index] = item
+        checkList.items![index] = item
         tableView.reloadRows(at: [IndexPath(item: index, section: 0)], with: UITableView.RowAnimation.automatic)
     }
 }

@@ -89,7 +89,7 @@
                         <sections>
                             <tableViewSection id="bEF-rF-7ln">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zSe-KQ-nD7">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="staticCell" id="zSe-KQ-nD7">
                                         <rect key="frame" x="0.0" y="35" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zSe-KQ-nD7" id="XXw-MY-zYX">
@@ -123,7 +123,7 @@
                             </tableViewSection>
                             <tableViewSection id="L57-z8-RQ2">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="OON-gj-JQP">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="staticCell" id="OON-gj-JQP">
                                         <rect key="frame" x="0.0" y="115" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OON-gj-JQP" id="sMu-hb-N3E">
@@ -199,7 +199,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="bDone" destination="jQE-Mq-jEi" id="CFO-fy-nsB"/>
+                        <outlet property="btnDone" destination="jQE-Mq-jEi" id="CFO-fy-nsB"/>
                         <outlet property="datePicker" destination="YvN-6W-dmC" id="diM-yo-9HZ"/>
                         <outlet property="datePickerView" destination="evX-KF-aYP" id="0yw-gv-FV0"/>
                         <outlet property="dueDateLabel" destination="3Hy-zH-bQA" id="tht-P4-Reh"/>

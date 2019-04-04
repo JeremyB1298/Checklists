@@ -10,8 +10,8 @@ import UIKit
 
 protocol ListDetailViewControllerDelegate : class {
     func listDetailViewControllerDidCancel(_ controller: ListDetailViewController)
-    func listDetailViewController(_ controller: ListDetailViewController, didFinishAddingItem list: Checklist)
-    func listDetailViewController(_ controller: ListDetailViewController, didFinishEditingItem list: Checklist)
+    func listDetailViewController(_ controller: ListDetailViewController, didFinishAddingList list: Checklist)
+    func listDetailViewController(_ controller: ListDetailViewController, didFinishEditingList list: Checklist)
 }
 
 class ListDetailViewController: UITableViewController {
@@ -41,12 +41,10 @@ class ListDetailViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         txtField.becomeFirstResponder()
-        if txtField.text?.count != 0 {
-            btnDone.isEnabled = true
-        } else {
-            btnDone.isEnabled = false
-        }
+        btnDone.isEnabled = txtField.text?.count != 0 ? true : false
     }
+    
+    //MARK: - Prepare
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "IconSegueIdentifier") {
@@ -58,7 +56,7 @@ class ListDetailViewController: UITableViewController {
         }
     }
     
-    // MARK: - Table view data source
+    // MARK: - Personnal functions
 
     @IBAction func btnCancel(_ sender: UIBarButtonItem) {
         delegate?.listDetailViewControllerDidCancel(self)
@@ -67,31 +65,35 @@ class ListDetailViewController: UITableViewController {
         if editList != nil{
             editList?.name = txtField.text!
             editList?.icon = icon
-            delegate?.listDetailViewController(self, didFinishEditingItem: editList!)
+            delegate?.listDetailViewController(self, didFinishEditingList: editList!)
         } else {
             guard let txt = txtField.text else {
                 return
             }
             if let checklistIcon = icon {
-                delegate?.listDetailViewController(self, didFinishAddingItem: Checklist(name: txt, icon: checklistIcon))
+                delegate?.listDetailViewController(self, didFinishAddingList: Checklist(name: txt, icon: checklistIcon))
             } else {
-                delegate?.listDetailViewController(self, didFinishAddingItem: Checklist(name: txt))
+                delegate?.listDetailViewController(self, didFinishAddingList: Checklist(name: txt))
             }
         }
     }
 }
+
+//MARK: - UITextFieldDelegate
+
 extension ListDetailViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let nsString = txtField.text as NSString?
-        let newString = nsString?.replacingCharacters(in: range, with: string)
-        if newString?.isEmpty ?? true {
-            btnDone.isEnabled = false
-        } else {
-            btnDone.isEnabled = true
+        guard var newString = nsString?.replacingCharacters(in: range, with: string) else {
+            return false
         }
+        newString = newString.trimmingCharacters(in: .whitespaces)
+        btnDone.isEnabled = !newString.isEmpty
         return true
     }
 }
+
+//MARK: - IconPickerViewControllerDelegate
 
 extension ListDetailViewController: IconPickerViewControllerDelegate {
     func iconPickerViewController(_ controller: IconPickerViewController, didFinishAddingIcon icon: IconAsset) {

@@ -62,35 +62,25 @@ class ChecklistItem : Codable, CustomStringConvertible {
         let day = calendar.component(.day, from: dueDate)
         let hour = calendar.component(.hour, from: dueDate)
         let minutes = calendar.component(.minute, from: dueDate)
-        let seconds = calendar.component(.second, from: dueDate)
         
         dateComponents.year = year
         dateComponents.month = month
         dateComponents.day = day
         dateComponents.hour = hour
         dateComponents.minute = minutes
-        dateComponents.second = seconds
         print(dateComponents)
-        let trigger = UNCalendarNotificationTrigger(
-            dateMatching: dateComponents, repeats: false)
-        //let uuidString = UUID().uuidString
-        let request = UNNotificationRequest(identifier: itemID.description,
-                                            content: content, trigger: trigger)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+        let request = UNNotificationRequest(identifier: itemID.description, content: content, trigger: trigger)
         
         let center = UNUserNotificationCenter.current()
-        
-        // Request permission to display alerts and play sounds.
         center.requestAuthorization(options: [.alert, .sound])
         { (granted, error) in
             if !granted {
                 print("Something went wrong")
             }
-            
         }
-        
         center.add(request) { (error) in
             if error != nil {
-                // Handle any errors.
             }
         }
     }

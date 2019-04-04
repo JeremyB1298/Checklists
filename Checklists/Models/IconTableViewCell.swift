@@ -9,7 +9,5 @@
 import UIKit
 
 class IconTableViewCell: UITableViewCell {
-
     @IBOutlet weak var lblTitle: UILabel!
-    
 }
