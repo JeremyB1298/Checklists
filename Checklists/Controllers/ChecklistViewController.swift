@@ -8,56 +8,17 @@
 
 import UIKit
 
-class ChecklistViewController: UITableViewController, ItemDetailViewControllerDelegate {
-    func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController) {
-        controller.dismiss(animated: true, completion: nil)
-    }
-    
-    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem) {
-        controller.dismiss(animated: true, completion: nil)
-        
-        guard let list = checklistItem else {
-            return
-        }
-        checklistItem?.append(item)
-        tableView.insertRows(at: [IndexPath(item: list.count, section: 0)], with: UITableView.RowAnimation.top)
-        saveChecklistItems()
-    }
-    
-    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
-        controller.dismiss(animated: true, completion: nil)
-        
-        guard var list = checklistItem else {
-            return
-        }
-        guard let index = checklistItem?.firstIndex(where: { $0 === item }) else {
-            return
-        }
-        list[index] = item
-        tableView.reloadRows(at: [IndexPath(item: index, section: 0)], with: UITableView.RowAnimation.automatic)
-        saveChecklistItems()
-    }
-    
-    var checklistItem: [ChecklistItem]?
-    static var documentDirectory: URL {
-        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-    }
-    
-    static var dataFileUrl: URL {
-        return ChecklistViewController.documentDirectory.appendingPathComponent("Checklists").appendingPathExtension("json")
-    }
+class ChecklistViewController: UITableViewController{
+
+    var checkList: Checklist!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(ChecklistViewController.documentDirectory)
-        print(ChecklistViewController.dataFileUrl)
+        
+        self.navigationItem.title = checkList.name
     }
     
-    override func awakeFromNib() {
-        loadChecklistItems()
-    }
-    
-    //MARK: - prepare
+    //MARK: - Prepare
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "addItem") {
@@ -74,14 +35,16 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
                 return
             }
             vc.navigationItem.title = "Edit Item"
-            vc.itemToEdit = checklistItem?[id]
+            vc.itemToEdit = checkList.items?[id]
+            vc.dueDate = (vc.itemToEdit?.dueDate)!
             vc.delegate = self
         }
     }
-    //MARK: - data source
+    
+    //MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let list = checklistItem else {
+        guard let list = checkList.items else {
             return 0
         }
         return list.count
@@ -92,7 +55,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
             return UITableViewCell()
         }
         
-        guard let list = checklistItem else {
+        guard let list = checkList.items else {
             return UITableViewCell()
         }
         configureText(for: cell, withItem: list[indexPath.row])
@@ -102,71 +65,80 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        checklistItem?.remove(at: indexPath.row)
+        checkList.items?[indexPath.row].deleteNotification()
+        checkList.items?.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
-        saveChecklistItems()
+        
     }
     
-    //MARK: - table view delegate
+    //MARK: - Table view delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        guard let list = checklistItem else {
+        guard let list = checkList.items else {
             return
         }
         
         list[indexPath.row].toggleChecked()
         tableView.reloadRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
-        saveChecklistItems()
+        
     }
     
-    //MARK: - configuration
+    //MARK: - Configuration
     
     func configureCheckmark(for cell: ChecklistItemCell, withItem item: ChecklistItem) {
-        if item.checked == false {
-            cell.lblChecked.isHidden = true
-        } else {
-            cell.lblChecked.isHidden = false
+        if item.checked {
+            cell.lblChecked.textColor = view.tintColor
         }
+        cell.lblChecked.isHidden = !item.checked
     }
     
     func configureText(for cell: ChecklistItemCell, withItem item: ChecklistItem) {
         cell.lblTitle.text = item.text
     }
     
-        //MARK: - load ans save json data
+    //MARK: - Button action
     
-    func saveChecklistItems() {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
-        do {
-            let data = try encoder.encode(checklistItem)
-            print(String(data: data, encoding: .utf8)!)
-            try data.write(to: ChecklistViewController.dataFileUrl)
-        } catch {
-            //handle error
-            print(error)
-        }
+    @IBAction func btnCancel(_ sender: UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
+    }
+}
+
+//MARK: - ItemDetailViewControllerDelegate
+
+extension ChecklistViewController: ItemDetailViewControllerDelegate {
+    func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController) {
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func loadChecklistItems() {
+    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem) {
         
-        if !FileManager.default.fileExists(atPath: ChecklistViewController.dataFileUrl.path) {
-            checklistItem = []
-        }else {
-            do {
-                let datas = try Data(contentsOf: ChecklistViewController.dataFileUrl)
-                
-                let decoder = JSONDecoder()
-                let list = try decoder.decode([ChecklistItem].self, from: datas)
-                checklistItem = list
-            }catch {
-                //handle error
-                print(error)
-                
-            }
+        controller.dismiss(animated: true, completion: nil)
+        
+        if item.shouldRemind, item.dueDate > Date() {
+            item.scheduleNotification()
+        } else {
+            item.deleteNotification()
         }
+        
+        checkList.items!.append(item)
+        tableView.insertRows(at: [IndexPath(item: checkList.items!.count-1, section: 0)], with: UITableView.RowAnimation.top)
     }
     
+    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem) {
+        
+        controller.dismiss(animated: true, completion: nil)
+        
+        if item.shouldRemind, item.dueDate > Date() {
+            item.scheduleNotification()
+        } else {
+            item.deleteNotification()
+        }
+        guard let index = checkList.items!.firstIndex(where: { $0 === item }) else {
+            return
+        }
+        checkList.items![index] = item
+        tableView.reloadRows(at: [IndexPath(item: index, section: 0)], with: UITableView.RowAnimation.automatic)
+    }
 }
 
