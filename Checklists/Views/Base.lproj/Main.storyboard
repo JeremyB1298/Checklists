@@ -105,7 +105,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                                     <connections>
-                                                        <action selector="done" destination="m9w-Jn-czy" eventType="editingDidEndOnExit" id="9mG-k6-i5M"/>
+                                                        <action selector="closeKeyboard:" destination="m9w-Jn-czy" eventType="editingDidEndOnExit" id="WgU-3U-sOM"/>
                                                         <action selector="txtFieldBegin:" destination="m9w-Jn-czy" eventType="editingDidBegin" id="Z6p-hA-zOA"/>
                                                         <outlet property="delegate" destination="m9w-Jn-czy" id="XA5-7D-fWg"/>
                                                     </connections>
@@ -370,7 +370,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                                     <connections>
-                                                        <action selector="actDone" destination="heT-b6-5i7" eventType="editingDidEndOnExit" id="620-EZ-Nu6"/>
+                                                        <action selector="closeKeyboard:" destination="heT-b6-5i7" eventType="editingDidEndOnExit" id="BOH-D8-TuI"/>
                                                         <outlet property="delegate" destination="heT-b6-5i7" id="oy6-oO-L9F"/>
                                                     </connections>
                                                 </textField>

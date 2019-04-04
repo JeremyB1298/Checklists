@@ -56,8 +56,11 @@ class ListDetailViewController: UITableViewController {
         }
     }
     
-    // MARK: - Personnal functions
+    // MARK: - Button actions
 
+    @IBAction func closeKeyboard(_ sender: Any) {
+        txtField.endEditing(true)
+    }
     @IBAction func btnCancel(_ sender: UIBarButtonItem) {
         delegate?.listDetailViewControllerDidCancel(self)
     }
@@ -88,6 +91,7 @@ extension ListDetailViewController: UITextFieldDelegate {
             return false
         }
         newString = newString.trimmingCharacters(in: .whitespaces)
+        newString = String(newString.filter { !" \n\t\r".contains($0) })
         btnDone.isEnabled = !newString.isEmpty
         return true
     }

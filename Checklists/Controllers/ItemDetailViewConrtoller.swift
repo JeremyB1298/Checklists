@@ -158,6 +158,9 @@ class ItemDetailViewController: UITableViewController {
             hideDatePicker()
         }
     }
+    @IBAction func closeKeyboard(_ sender: Any) {
+        txtField.endEditing(true)
+    }
     
 }
 
@@ -170,6 +173,7 @@ extension ItemDetailViewController: UITextFieldDelegate {
             return false
         }
         newString = newString.trimmingCharacters(in: .whitespaces)
+        newString = String(newString.filter { !" \n\t\r".contains($0) })
         btnDone.isEnabled = !newString.isEmpty
         return true
     }
